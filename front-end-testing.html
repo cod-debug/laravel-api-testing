@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>TEST LARAVEL API</title>
+	</head>
+	<body>
+		<table width="100%">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody id="userTableBody" style="text-align: center;">
+
+			</tbody>
+		</table>
+
+		<hr />
+		<form>
+			<table>
+				<tr>
+					<td>Name:
+					<td><input type="text" id="userName" />
+				</tr>
+				<tr>
+					<td>Email:
+					<td><input type="text" id="userEmail" />
+				</tr>
+				<tr>
+					<td>Password:
+					<td><input type="password" id="userPassword" />
+				</tr>
+			</table>
+			<button type="button" onclick="registerUser()">Submit</button>
+		</form>
+	</body>
+</html>
+<script>
+	async function getUsers(){
+		var userList = await fetch("http://127.0.0.1:8000/api/users", {
+			headers: {
+		        'Accept': 'application/json',
+		        'Content-Type': 'application/json',
+		        'Authorization': 'Bearer 8|EELHjrkxeN3wso1JqlReLbeRI0FPkQ06lLOidJIS03e23e93'
+			}
+		});
+		console.log();
+		userList.then((data) => {
+			data.json().then((response) => {
+				let tableRow = "";
+
+				response.data.map((item, key) => {
+					tableRow+=`<tr>
+						<td>${key+1}</td>
+						<td>${item.name}</td>
+						<td>${item.email}</td>
+					</tr>`
+				});
+
+				document.getElementById("userTableBody").innerHTML = tableRow;
+			})
+		});
+	}
+
+	function registerUser(){
+		let userName = document.getElementById("userName").value;
+		let userEmail = document.getElementById("userEmail").value;
+		let userPassword = document.getElementById("userPassword").value;
+
+		let payload = {
+			name: userName,
+			email: userEmail,
+			password: userPassword
+		}
+
+		var userList = fetch("http://127.0.0.1:8000/api/auth/register", {
+			headers: {
+		        'Accept': 'application/json',
+		        'Content-Type': 'application/json'
+			},
+			method: "POST",
+			body: JSON.stringify(payload)
+		});
+
+		getUsers();
+	}
+
+	getUsers();
+</script>
